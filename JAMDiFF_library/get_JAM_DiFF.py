@@ -98,12 +98,21 @@ def get_JAM_DiFF_dict(z_array, Mh_array, mu_array, kinds, wdir):
             flavors_by_kind[kind] = flavors
             n_replicas = len(next(iter(value_dict.values())))
 
-            for replica_id in range(n_replicas):
+            central_key = (kind, mu_key, 0)
+            keys.append(central_key)
+            dict_raw_DiFF[central_key] = np.column_stack(
+                [
+                    np.mean(np.stack(value_dict[flav], axis=0), axis=0)
+                    for flav in flavors
+                ]
+            )
+
+            for replica_id in range(1, n_replicas + 1):
                 key = (kind, mu_key, replica_id)
                 keys.append(key)
 
                 dict_raw_DiFF[key] = np.column_stack(
-                    [value_dict[flav][replica_id] for flav in flavors]
+                    [value_dict[flav][replica_id - 1] for flav in flavors]
                 )
 
     dict_raw_DiFF["z_array"] = obj["z_array"]
