@@ -1,0 +1,2 @@
+search_strategy,a_D1,b_D1,chi2_shape,npts_shape,ndatasets_shape,ndof_shape,chi2_shape_per_ndof,fit_time_sec,optimizer_nf,optimizer_flag,optimizer_message
+pybobyqa_global,0.39806119915641336,1.1576967150364457,340.5524797669582,46,8,36,9.459791104637727,51.939411593999466,500,1,Warning (max evals): Objective has been called MAXFUN times

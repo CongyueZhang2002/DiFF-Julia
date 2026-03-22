@@ -8,13 +8,7 @@ const pdf_dict_0 = Dict(
     "i_member" => 0 
 ) # also for strong coupling constant
 
-const pdf_dict_1 = Dict(
-    "pdfset_name" => "JAMDiFF23-transversity_lo",
-    "iset" => 1,
-    "i_member" => 0 
-)
-
-const pdf_dict_array = [pdf_dict_0, pdf_dict_1]
+const pdf_dict_array = [pdf_dict_0]
 
 #----------------------------------------------------------------------------
 # masses

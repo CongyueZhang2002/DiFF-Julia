@@ -33,7 +33,7 @@ function ΛQCD_func(nf)
 end 
 
 function αs_func(μ)
-    return get_alphas(iset, μ)
+    return get_alphas(0, μ)
 end
 
 function αs_func_old(μ) 
