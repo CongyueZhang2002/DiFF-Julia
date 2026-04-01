@@ -1,4 +1,6 @@
 Grids/dict_raw_DiFF.pkl
+Grids/dict_raw_DiFF_ee_EEC_exact.pkl
 **/__pycache__/
 .ipynb_checkpoints/
 *.Zone.Identifier
+*:Zone.Identifier

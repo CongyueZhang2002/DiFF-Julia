@@ -8,6 +8,8 @@ const pdf_dict_0 = Dict(
     "i_member" => 0 
 ) # also for strong coupling constant
 
+results_dir_name = "AUT_EEC_EIC"
+
 const pdf_dict_array = [pdf_dict_0]
 
 #----------------------------------------------------------------------------

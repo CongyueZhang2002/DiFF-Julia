@@ -14,6 +14,9 @@ const pdf_dict_1 = Dict(
     "i_member" => 0 
 )
 
+wdir = "results/wLQCD"
+results_dir_name = "AUT_EEC_EIC"
+
 const pdf_dict_array = [pdf_dict_0, pdf_dict_1]
 
 #----------------------------------------------------------------------------
