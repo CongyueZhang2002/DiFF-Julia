@@ -16,6 +16,9 @@ const pdf_dict_1 = Dict(
 
 wdir = "results/noLQCD"
 results_dir_name = "AUT_EEC_EIC_noLQCD"
+scan_grid_name = "a_b_uniform_area_100"
+dict_raw_DiFF_name = "dict_raw_DiFF_noLQCD"
+JAM_DiFF_extrapolation_policy = :zero
 
 const pdf_dict_array = [pdf_dict_0, pdf_dict_1]
 

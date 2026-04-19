@@ -4,6 +4,19 @@ function EE_EEC(; chi::Real, Q::Real, mu::Real, rep::Int)
 
     D1_vec = D1_EEC_vec(zchi = z, Q = Q, mu = mu, rep = rep)
     eq2 = eq2_vec(mu)
+
+    Dq = sum(eq2 .* D1_vec)
+    prefactor = 4 * pi * NC * alpha_qed(Q)^2 / (3 * Q^2)
+
+    return prefactor * Dq
+end
+
+function EE_EEC_normalized(; chi::Real, Q::Real, mu::Real, rep::Int)
+
+    z = (1 - cos(chi)) / 2
+
+    D1_vec = D1_EEC_vec(zchi = z, Q = Q, mu = mu, rep = rep)
+    eq2 = eq2_vec(mu)
     charge_norm = sum(eq2)
 
     Dq = sum(eq2 .* D1_vec) / charge_norm
