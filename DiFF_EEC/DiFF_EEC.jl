@@ -3,13 +3,13 @@ const FlavorIndices = (-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5)
 
 function get_f1(x::Real, μ::Real)
     pdfs = get_pdfs(0, Float64(x), Float64(μ))
-    return [pdfs[i] / x for i in FlavorIndices]
+    return [pdfs[i] for i in FlavorIndices]
 end
 
 function get_h1(x::Real, μ::Real, rep::Int)
     set_lhapdf(1, pdf_dict_array[2]["pdfset_name"], rep)
     pdfs = get_pdfs(1, Float64(x), Float64(μ))
-    return [pdfs[i] / x for i in FlavorIndices]
+    return [pdfs[i] for i in FlavorIndices]
 end
 
 @inline function DiFF_EEC(; kind::String, zchi::Real, Q::Real, mu::Real, rep::Int, nth::Int)

@@ -3,7 +3,7 @@
 #----------------------------------------------------------------------------
 
 const pdf_dict_0 = Dict(
-    "pdfset_name" => "CT18NLO",
+    "pdfset_name" => "CT18NLO_mc",
     "iset" => 0,
     "i_member" => 0 
 ) # also for strong coupling constant

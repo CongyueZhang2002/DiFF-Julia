@@ -6,7 +6,7 @@ function EE_EEC(; chi::Real, Q::Real, mu::Real, rep::Int)
     eq2 = eq2_vec(mu)
 
     Dq = sum(eq2 .* D1_vec)
-    prefactor = 4 * pi * NC * alpha_qed(Q)^2 / (3 * Q^2)
+    prefactor = sin(chi) / 2
 
     return prefactor * Dq
 end
