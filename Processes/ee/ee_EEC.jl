@@ -6,22 +6,10 @@ function EE_EEC(; chi::Real, Q::Real, mu::Real, rep::Int)
     eq2 = eq2_vec(mu)
 
     Dq = sum(eq2 .* D1_vec)
+    charge_norm = sum(eq2)
     prefactor = sin(chi) / 2
 
-    return prefactor * Dq
-end
-
-function EE_EEC_normalized(; chi::Real, Q::Real, mu::Real, rep::Int)
-
-    z = (1 - cos(chi)) / 2
-
-    D1_vec = D1_EEC_vec(zchi = z, Q = Q, mu = mu, rep = rep)
-    eq2 = eq2_vec(mu)
-    charge_norm = sum(eq2)
-
-    Dq = sum(eq2 .* D1_vec) / charge_norm
-
-    return sin(chi) / 4 * Dq
+    return prefactor * Dq / charge_norm
 end
 
 function EE_EEC_pmap(; chi_array::AbstractVector, Q_array::AbstractVector, mu_array::AbstractVector, rep::AbstractVector)

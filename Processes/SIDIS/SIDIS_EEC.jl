@@ -1,23 +1,44 @@
+sqrts_EIC = 100.0
+const SIDIS_EEC_min_μ = 1.0
+
+SIDIS_EEC_safe_μ(μ::Real) = max(μ, SIDIS_EEC_min_μ)
+
+function SIDIS_EEC_y(; x::Real, Q::Real)
+    y = Q^2 / (x * sqrts_EIC^2)
+    if !(isfinite(y) && 0.0 < y < 1.0)
+        throw(DomainError(y, "SIDIS_EEC requires 0 < y < 1 for y = Q^2 / (x * sqrts_EIC^2); got x=$(x), Q=$(Q), sqrts_EIC=$(sqrts_EIC)"))
+    end
+    return y
+end
+
 function SIDIS_EEC(; chi::Real, x::Real, Q::Real, μ::Real)
 
+    μ = SIDIS_EEC_safe_μ(μ)
+    y = SIDIS_EEC_y(x=x, Q=Q)
     z = (1 - cos(chi)) / 2
 
     Dq, _ = D1_EEC_own(z, Q, μ)
 
-    return sin(chi) / 2 * Dq * sum(eq2_vec(μ) .* get_f1(x, μ))
+    prefactor = 2*pi*alpha_qed(Q)^2/Q^2
+    structure = (1+(1-y)^2)/y * Dq * sum(eq2_vec(μ) .* get_f1(x, μ))
+
+    return sin(chi) / 2 * prefactor * structure
 end
 
 function SIDIS_EEC_batch(; chi_array::AbstractVector, x::Real, Q::Real, μ::Real)
 
-    U = D1_EEC_own_precompute_evolution(mb, max(μ, 1.0))[1, 1]
+    μ = SIDIS_EEC_safe_μ(μ)
+    y = SIDIS_EEC_y(x=x, Q=Q)
+    U = D1_EEC_own_precompute_evolution(mb, μ)[1, 1]
 
-    factor = sum(eq2_vec(μ) .* get_f1(x, μ)) * U
+    prefactor = 2*pi*alpha_qed(Q)^2/Q^2
+    structure = (1+(1-y)^2)/y * sum(eq2_vec(μ) .* get_f1(x, μ)) * U
 
     predictions = Vector{Float64}(undef, length(chi_array))
     @inbounds for i in eachindex(chi_array)
         chi = chi_array[i]
         z = (1 - cos(chi)) / 2
-        predictions[i] = sin(chi)/ 2 * factor * D1_EEC_own_initial_quark(z, Q)
+        predictions[i] = sin(chi)/ 2 * D1_EEC_own_initial_quark(z, Q) * prefactor * structure
     end
 
     return predictions

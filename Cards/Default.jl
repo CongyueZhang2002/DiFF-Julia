@@ -16,7 +16,7 @@ const pdf_dict_1 = Dict(
 
 wdir = "results/wLQCD"
 results_dir_name = "AUT_EEC_EIC"
-scan_grid_name = "a_b_uniform_area_100"
+scan_grid_name = "a_b_corrected_area_uniform_200"
 dict_raw_DiFF_name = "dict_raw_DiFF"
 JAM_DiFF_extrapolation_policy = :zero # :zero, :warn_zero, or :error
 
