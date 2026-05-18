@@ -37,22 +37,22 @@
     9/2 * (3 - (t*u)/s^2 - (s*u)/t^2 - (s*t)/u^2)
 )
 
-@inline H_U_func(; s::Float64, t::Float64, u::Float64) = Dict(
+@inline H_U_func(; s::Float64, t::Float64, u::Float64) = (
 
-    "qqp_qqp" => H_U_qqp_qqp_func(s=s, t=t, u=u),
-    "qq_qq" => H_U_qq_qq_func(s=s, t=t, u=u),
-    "qqb_qpqpb" => H_U_qqb_qpqpb_func(s=s, t=t, u=u),
-    "qqb_qqb" => H_U_qqb_qqb_func(s=s, t=t, u=u),
-    "gq_gq" => H_U_gq_gq_func(s=s, t=t, u=u),
-    "qqb_gg" => H_U_qqb_gg_func(s=s, t=t, u=u),
-    "gg_qqb" => H_U_gg_qqb_func(s=s, t=t, u=u),
-    "gg_gg" => H_U_gg_gg_func(s=s, t=t, u=u),
+    qqp_qqp = H_U_qqp_qqp_func(s=s, t=t, u=u),
+    qq_qq = H_U_qq_qq_func(s=s, t=t, u=u),
+    qqb_qpqpb = H_U_qqb_qpqpb_func(s=s, t=t, u=u),
+    qqb_qqb = H_U_qqb_qqb_func(s=s, t=t, u=u),
+    gq_gq = H_U_gq_gq_func(s=s, t=t, u=u),
+    qqb_gg = H_U_qqb_gg_func(s=s, t=t, u=u),
+    gg_qqb = H_U_gg_qqb_func(s=s, t=t, u=u),
+    gg_gg = H_U_gg_gg_func(s=s, t=t, u=u),
 
-    "gq_gq_cross" => H_U_gq_gq_func(s=s, t=u, u=t),
-    "qqp_qqp_cross" => H_U_qqp_qqp_func(s=s, t=u, u=t),
-    "qqb_qqb_cross" => H_U_qqb_qqb_func(s=s, t=u, u=t),
+    gq_gq_cross = H_U_gq_gq_func(s=s, t=u, u=t),
+    qqp_qqp_cross = H_U_qqp_qqp_func(s=s, t=u, u=t),
+    qqb_qqb_cross = H_U_qqb_qqb_func(s=s, t=u, u=t),
 
-    "zero" => 0.0
+    zero = 0.0
 )
 
 @inline qb_func(flavor::String) = (
@@ -94,58 +94,58 @@
     if a == "g"
         if b == "g"
             if c == "g"
-                return "gg_gg"
+                return :gg_gg
             elseif c != "g"
-                return "gg_qqb"
+                return :gg_qqb
             else
-                return "zero"
+                return :zero
             end
         elseif b != "g"
             if c == "g"
-                return "gq_gq"
+                return :gq_gq
             elseif c == b
-                return "gq_gq_cross"   
+                return :gq_gq_cross
             else
-                return "zero"
+                return :zero
             end
         end
     else
         if b == "g"
             if c == a
-                return "gq_gq"
+                return :gq_gq
             elseif c == "g"
-                return "gq_gq_cross"   
+                return :gq_gq_cross
             else
-                return "zero"
+                return :zero
             end
         elseif b == a
             if c == a
-                return "qq_qq"
+                return :qq_qq
             else
-                return "zero"
+                return :zero
             end
         elseif if_qp(a, b)
             if c == a
-                return "qqp_qqp"
+                return :qqp_qqp
             elseif c == b
-                return "qqp_qqp_cross" 
+                return :qqp_qqp_cross
             else
-                return "zero"
+                return :zero
             end
         elseif b == qb_func(a)
             if c == a
-                return "qqb_qqb"
+                return :qqb_qqb
             elseif c == b
-                return "qqb_qqb_cross" 
+                return :qqb_qqb_cross
             elseif c == "g"
-                return "qqb_gg"
+                return :qqb_gg
             elseif if_qp(a, c)
-                return "qqb_qpqpb"
+                return :qqb_qpqpb
             else
-                return "zero"
+                return :zero
             end
         else
-            return "zero"
+            return :zero
         end
     end
 end
@@ -172,13 +172,13 @@ end
     -8/9 * s * u / t^2
 )
 
-@inline H_T_func(; s::Float64, t::Float64, u::Float64) = Dict(
-    "qg_qg" => H_T_qg_qg_func(s=s, t=t, u=u),
-    "qq_qq" => H_T_qq_qq_func(s=s, t=t, u=u),
-    "qqb_qqb" => H_T_qqb_qqb_func(s=s, t=t, u=u),
-    "qqb_qbq" => H_T_qqb_qbq_func(s=s, t=t, u=u),
-    "qqp_qqp" => H_T_qqp_qqp_func(s=s, t=t, u=u),
-    "zero" => 0.0
+@inline H_T_func(; s::Float64, t::Float64, u::Float64) = (
+    qg_qg = H_T_qg_qg_func(s=s, t=t, u=u),
+    qq_qq = H_T_qq_qq_func(s=s, t=t, u=u),
+    qqb_qqb = H_T_qqb_qqb_func(s=s, t=t, u=u),
+    qqb_qbq = H_T_qqb_qbq_func(s=s, t=t, u=u),
+    qqp_qqp = H_T_qqp_qqp_func(s=s, t=t, u=u),
+    zero = 0.0
 )
 
 @inline function H_T_channel(; a::String, b::String, c::String)
@@ -187,18 +187,18 @@ end
     # c is the fragmenting parton.
 
     if a == "g"
-        return "zero"
+        return :zero
     elseif b == a && c == a
-        return "qq_qq"
+        return :qq_qq
     elseif if_qp(a, b) && c == a
-        return "qqp_qqp"
+        return :qqp_qqp
     elseif b == qb_func(a) && c == a
-        return "qqb_qqb"
+        return :qqb_qqb
     elseif b == qb_func(a) && c == b
-        return "qqb_qbq"
+        return :qqb_qbq
     elseif b == "g" && c == a
-        return "qg_qg"
+        return :qg_qg
     else
-        return "zero"
+        return :zero
     end
 end

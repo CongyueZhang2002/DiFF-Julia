@@ -26,7 +26,7 @@ function pp_EEC_T_integrand(; x2::Real, pT::Real, θ::Real, η::Real, sqrts::Rea
     z = (1 - cos(θ)) / 2
 
     # Functions
-    H_T_dict = H_T_func(s=s, t=t, u=u)
+    H_T = H_T_func(s=s, t=t, u=u)
 
     h1_vec = get_h1(x1, μ, rep)
     f1_vec = get_f1(x2, μ)
@@ -39,9 +39,9 @@ function pp_EEC_T_integrand(; x2::Real, pT::Real, θ::Real, η::Real, sqrts::Rea
         for b in 1:11
             for c in 1:11
                 channel = H_T_channel(a=Flavors[a], b=Flavors[b], c=Flavors[c])
-                channel == "zero" && continue
+                channel === :zero && continue
 
-                val += h1_vec[a] * f1_vec[b] * H1a_vec[c] * H_T_dict[channel]
+                val += h1_vec[a] * f1_vec[b] * H1a_vec[c] * H_T[channel]
             end
         end
     end
@@ -142,7 +142,7 @@ function pp_EEC_U_integrand(; x2::Real, pT::Real, θ::Real, η::Real, sqrts::Rea
     z = (1 - cos(θ)) / 2
 
     # Functions
-    H_U_dict = H_U_func(s=s, t=t, u=u)
+    H_U = H_U_func(s=s, t=t, u=u)
 
     f1_x1_vec = get_f1(x1, μ)
     f1_x2_vec = get_f1(x2, μ)
@@ -155,9 +155,9 @@ function pp_EEC_U_integrand(; x2::Real, pT::Real, θ::Real, η::Real, sqrts::Rea
         for b in 1:11
             for c in 1:11
                 channel = H_U_channel(a=Flavors[a], b=Flavors[b], c=Flavors[c])
-                channel == "zero" && continue
+                channel === :zero && continue
 
-                val += f1_x1_vec[a] * f1_x2_vec[b] * D1_vec[c] * H_U_dict[channel]
+                val += f1_x1_vec[a] * f1_x2_vec[b] * D1_vec[c] * H_U[channel]
             end
         end
     end
@@ -250,22 +250,24 @@ function pp_EEC_AUT_bin(; pT::Real, θ_lo::Real, θ_hi::Real, η_lo::Real, η_hi
     return num / den
 end
 
-#function EE_EEC_AUT_pmap(; chi_array::AbstractVector, chibar_array::AbstractVector, Q_array::AbstractVector, mu_array::AbstractVector, rep::AbstractVector)
-#    
-#    n = length(chi_array)
-#    length(chibar_array) == n || throw(ArgumentError("chibar_array must have the same length as chi_array"))
-#    length(Q_array) == n || throw(ArgumentError("Q_array must have the same length as chi_array"))
-#    length(mu_array) == n || throw(ArgumentError("mu_array must have the same length as chi_array"))
-#    length(rep) == n || throw(ArgumentError("rep must have the same length as chi_array"))
-#
-#    args_vec = collect(zip(chi_array, chibar_array, Q_array, mu_array, Int.(rep)))
-#
-#    predictions = nothing
-#    t = @elapsed begin
-#        predictions = pmap(args_vec; batch_size = 1) do (chi, chibar, Q, mu, rep_i)
-#            EE_EEC_AUT(chi = chi, chibar = chibar, Q = Q, mu = mu, rep = rep_i)
-#        end
-#    end
-#
-#    return predictions, t
-#end
+function pp_EEC_AUT_bin_pmap(; pT_array::AbstractVector, θ_lo_array::AbstractVector, θ_hi_array::AbstractVector, η_lo_array::AbstractVector, η_hi_array::AbstractVector, sqrts_array::AbstractVector, rep::AbstractVector)
+
+    n = length(pT_array)
+    length(θ_lo_array) == n || throw(ArgumentError("θ_lo_array must have the same length as pT_array"))
+    length(θ_hi_array) == n || throw(ArgumentError("θ_hi_array must have the same length as pT_array"))
+    length(η_lo_array) == n || throw(ArgumentError("η_lo_array must have the same length as pT_array"))
+    length(η_hi_array) == n || throw(ArgumentError("η_hi_array must have the same length as pT_array"))
+    length(sqrts_array) == n || throw(ArgumentError("sqrts_array must have the same length as pT_array"))
+    length(rep) == n || throw(ArgumentError("rep must have the same length as pT_array"))
+
+    args_vec = collect(zip(pT_array, θ_lo_array, θ_hi_array, η_lo_array, η_hi_array, sqrts_array, Int.(rep)))
+
+    predictions = nothing
+    t = @elapsed begin
+        predictions = pmap(args_vec; batch_size = 1) do (pT, θ_lo, θ_hi, η_lo, η_hi, sqrts, rep_i)
+            pp_EEC_AUT_bin(pT = pT, θ_lo = θ_lo, θ_hi = θ_hi, η_lo = η_lo, η_hi = η_hi, sqrts = sqrts, rep = rep_i)
+        end
+    end
+
+    return predictions, t
+end
