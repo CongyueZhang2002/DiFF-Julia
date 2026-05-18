@@ -68,7 +68,50 @@ function pp_EEC_T(; pT::Real, θ::Real, η::Real, sqrts::Real, rep::Int)
     return result
 end
 
-function pp_EEC_T_bin(; pT::Real, θ_lo::Real, θ_hi::Real, η_lo::Real, η_hi::Real, sqrts::Real, rep::Int)
+function pp_EEC_T_bin_η(; pT::Real, θ::Real, η_lo::Real, η_hi::Real, sqrts::Real, rep::Int)
+
+    S = sqrts^2
+
+    x2_lo(v) = begin
+        η = v[1]
+        T = -sqrts * pT * exp(-η)
+        U = -sqrts * pT * exp(η)
+        denom = S + U
+        denom <= 0 && return 1.0
+        return min(max(-T / denom, 0.0), 1.0)
+    end
+    x2_hi(v) = 1.0
+
+    f_factor(v) = 1.0
+    f_NP(v) = 1.0
+    f_Pert(v) = pp_EEC_T_integrand(
+        x2 = v[1],
+        η = v[2],
+        θ = θ,
+        pT = pT,
+        sqrts = sqrts,
+        rep = rep,
+    )
+    product_rule(pert, NP) = pert * NP
+
+    settings = MultiGKTable.integration_settings(
+        f_factor,
+        f_Pert,
+        f_NP,
+        product_rule,
+        Float64,
+        [(x2_lo, x2_hi), (Float64(η_lo), Float64(η_hi))],
+        [7, 5],
+        [5, 3],
+        [1e-2, 5e-2],
+        [1e-12, 1e-12],
+    )
+
+    result, _ = MultiGKTable.integrate(settings)
+    return result
+end
+
+function pp_EEC_T_bin_θ_η(; pT::Real, θ_lo::Real, θ_hi::Real, η_lo::Real, η_hi::Real, sqrts::Real, rep::Int)
 
     S = sqrts^2
 
@@ -184,7 +227,50 @@ function pp_EEC_U(; pT::Real, θ::Real, η::Real, sqrts::Real, rep::Int)
     return result
 end
 
-function pp_EEC_U_bin(; pT::Real, θ_lo::Real, θ_hi::Real, η_lo::Real, η_hi::Real, sqrts::Real, rep::Int)
+function pp_EEC_U_bin_η(; pT::Real, θ::Real, η_lo::Real, η_hi::Real, sqrts::Real, rep::Int)
+
+    S = sqrts^2
+
+    x2_lo(v) = begin
+        η = v[1]
+        T = -sqrts * pT * exp(-η)
+        U = -sqrts * pT * exp(η)
+        denom = S + U
+        denom <= 0 && return 1.0
+        return min(max(-T / denom, 0.0), 1.0)
+    end
+    x2_hi(v) = 1.0
+
+    f_factor(v) = 1.0
+    f_NP(v) = 1.0
+    f_Pert(v) = pp_EEC_U_integrand(
+        x2 = v[1],
+        η = v[2],
+        θ = θ,
+        pT = pT,
+        sqrts = sqrts,
+        rep = rep,
+    )
+    product_rule(pert, NP) = pert * NP
+
+    settings = MultiGKTable.integration_settings(
+        f_factor,
+        f_Pert,
+        f_NP,
+        product_rule,
+        Float64,
+        [(x2_lo, x2_hi), (Float64(η_lo), Float64(η_hi))],
+        [7, 5],
+        [5, 3],
+        [1e-2, 5e-2],
+        [1e-12, 1e-12],
+    )
+
+    result, _ = MultiGKTable.integrate(settings)
+    return result
+end
+
+function pp_EEC_U_bin_θ_η(; pT::Real, θ_lo::Real, θ_hi::Real, η_lo::Real, η_hi::Real, sqrts::Real, rep::Int)
 
     S = sqrts^2
 
@@ -242,15 +328,44 @@ function pp_EEC_AUT(; pT::Real, θ::Real, η::Real, sqrts::Real, rep::Int)
     return num / den
 end
 
-function pp_EEC_AUT_bin(; pT::Real, θ_lo::Real, θ_hi::Real, η_lo::Real, η_hi::Real, sqrts::Real, rep::Int)
+function pp_EEC_AUT_bin_η(; pT::Real, θ::Real, η_lo::Real, η_hi::Real, sqrts::Real, rep::Int)
 
-    num = pp_EEC_T_bin(pT = pT, θ_lo = θ_lo, θ_hi = θ_hi, η_lo = η_lo, η_hi = η_hi, sqrts = sqrts, rep = rep)
-    den = pp_EEC_U_bin(pT = pT, θ_lo = θ_lo, θ_hi = θ_hi, η_lo = η_lo, η_hi = η_hi, sqrts = sqrts, rep = rep)
+    num = pp_EEC_T_bin_η(pT = pT, θ = θ, η_lo = η_lo, η_hi = η_hi, sqrts = sqrts, rep = rep)
+    den = pp_EEC_U_bin_η(pT = pT, θ = θ, η_lo = η_lo, η_hi = η_hi, sqrts = sqrts, rep = rep)
 
     return num / den
 end
 
-function pp_EEC_AUT_bin_pmap(; pT_array::AbstractVector, θ_lo_array::AbstractVector, θ_hi_array::AbstractVector, η_lo_array::AbstractVector, η_hi_array::AbstractVector, sqrts_array::AbstractVector, rep::AbstractVector)
+function pp_EEC_AUT_bin_θ_η(; pT::Real, θ_lo::Real, θ_hi::Real, η_lo::Real, η_hi::Real, sqrts::Real, rep::Int)
+
+    num = pp_EEC_T_bin_θ_η(pT = pT, θ_lo = θ_lo, θ_hi = θ_hi, η_lo = η_lo, η_hi = η_hi, sqrts = sqrts, rep = rep)
+    den = pp_EEC_U_bin_θ_η(pT = pT, θ_lo = θ_lo, θ_hi = θ_hi, η_lo = η_lo, η_hi = η_hi, sqrts = sqrts, rep = rep)
+
+    return num / den
+end
+
+function pp_EEC_AUT_bin_η_pmap(; pT_array::AbstractVector, θ_array::AbstractVector, η_lo_array::AbstractVector, η_hi_array::AbstractVector, sqrts_array::AbstractVector, rep::AbstractVector)
+
+    n = length(pT_array)
+    length(θ_array) == n || throw(ArgumentError("θ_array must have the same length as pT_array"))
+    length(η_lo_array) == n || throw(ArgumentError("η_lo_array must have the same length as pT_array"))
+    length(η_hi_array) == n || throw(ArgumentError("η_hi_array must have the same length as pT_array"))
+    length(sqrts_array) == n || throw(ArgumentError("sqrts_array must have the same length as pT_array"))
+    length(rep) == n || throw(ArgumentError("rep must have the same length as pT_array"))
+
+    args_vec = collect(zip(pT_array, θ_array, η_lo_array, η_hi_array, sqrts_array, Int.(rep)))
+
+    predictions = nothing
+    t = @elapsed begin
+        predictions = pmap(args_vec; batch_size = 1) do (pT, θ, η_lo, η_hi, sqrts, rep_i)
+            pp_EEC_AUT_bin_η(pT = pT, θ = θ, η_lo = η_lo, η_hi = η_hi, sqrts = sqrts, rep = rep_i)
+        end
+    end
+
+    return predictions, t
+end
+
+function pp_EEC_AUT_bin_θ_η_pmap(; pT_array::AbstractVector, θ_lo_array::AbstractVector, θ_hi_array::AbstractVector, η_lo_array::AbstractVector, η_hi_array::AbstractVector, sqrts_array::AbstractVector, rep::AbstractVector)
 
     n = length(pT_array)
     length(θ_lo_array) == n || throw(ArgumentError("θ_lo_array must have the same length as pT_array"))
@@ -265,7 +380,7 @@ function pp_EEC_AUT_bin_pmap(; pT_array::AbstractVector, θ_lo_array::AbstractVe
     predictions = nothing
     t = @elapsed begin
         predictions = pmap(args_vec; batch_size = 1) do (pT, θ_lo, θ_hi, η_lo, η_hi, sqrts, rep_i)
-            pp_EEC_AUT_bin(pT = pT, θ_lo = θ_lo, θ_hi = θ_hi, η_lo = η_lo, η_hi = η_hi, sqrts = sqrts, rep = rep_i)
+            pp_EEC_AUT_bin_θ_η(pT = pT, θ_lo = θ_lo, θ_hi = θ_hi, η_lo = η_lo, η_hi = η_hi, sqrts = sqrts, rep = rep_i)
         end
     end
 
